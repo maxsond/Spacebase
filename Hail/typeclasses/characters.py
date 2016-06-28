@@ -33,12 +33,34 @@ class Character(DefaultCharacter):
         "This is called when object is first created, only."
         self.db.role = " the Citizen"
 
-    def return_appearance(self, looker):
+    def get_display_name(self, looker, **kwargs):
         """
-        The return from this method is what
-        looker sees when looking at this object.
+        Displays the name of the object in a viewer-aware manner.
+
+        Args:
+            looker (TypedObject): The object or player that is looking
+                at/getting inforamtion for this object.
+
+        Returns:
+            name (str): A string containing the name of the object,
+                including the DBREF if this user is privileged to control
+                said object.
+
+        Notes:
+            This function could be extended to change how object names
+            appear to users in character, but be wary. This function
+            does not change an object's keys or aliases when
+            searching, and is expected to produce something useful for
+            builders.
+
         """
-        text = super(Character, self).return_appearance(looker)
-        title = self.db.role
-        text += title
-        return text
+        if self.locks.check_lockstring(looker, "perm(Builders)"):
+            return "{}(#{})".format(self.name + self.db.role, self.id)
+        return self.name + self.db.role
+
+    def control_new_character(self, session, object):
+        self.player.unpuppet_object(session)
+        self.player.puppet_object(object)
+
+class AICore(DefaultCharacter):
+    pass
