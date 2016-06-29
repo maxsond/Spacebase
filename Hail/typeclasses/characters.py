@@ -8,6 +8,8 @@ creation commands.
 
 """
 from evennia import DefaultCharacter
+from evennia.commands.cmdset import CmdSet
+from evennia import Command as BaseCommand
 
 class Character(DefaultCharacter):
     """
@@ -32,6 +34,23 @@ class Character(DefaultCharacter):
     def at_object_creation(self):
         "This is called when object is first created, only."
         self.db.role = " the Citizen"
+        self.cmdset.add_default(CmdSetTest, permanent=True)
+
+    def at_pre_puppet(self, player, session=None):
+        self.cmdset.add_default(CmdSetTest, permanent=True)
+        if self.db.prelogout_location:
+            # try to recover
+            self.location = self.db.prelogout_location
+        if self.location is None:
+            # make sure location is never None (home should always exist)
+            self.location = self.home
+        if self.location:
+            # save location again to be sure
+            self.db.prelogout_location = self.location
+            self.location.at_object_receive(self, self.location)
+        else:
+            player.msg("{r%s has no location and no home is set.{n" % self, session=session)
+
 
     def get_display_name(self, looker, **kwargs):
         """
@@ -64,3 +83,27 @@ class Character(DefaultCharacter):
 
 class AICore(DefaultCharacter):
     pass
+
+class TestCmd(BaseCommand):
+    """
+    Test building commands
+
+    Usage:
+       testme
+    """
+    key = "testme"
+    locks = "cmd:all()"
+    help_category = "general"
+
+    def func(self):
+        self.caller.msg("Hello, {}".format(self.caller))
+
+class CmdSetTest(CmdSet):
+    "CmdSet for the lightsource commands"
+    key = "lightsource_cmdset"
+    # this is higher than the dark cmdset - important!
+    priority = 3
+
+    def at_cmdset_creation(self):
+        "called at cmdset creation"
+        self.add(TestCmd())

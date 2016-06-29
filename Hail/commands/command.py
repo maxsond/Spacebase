@@ -182,3 +182,24 @@ class Command(BaseCommand):
 #            else:
 #                self.character = None
 #
+
+class PuppetCmd(Command):  # This is set on a puppetable character
+    """
+    Become a different character
+
+    Usage:
+      puppet <character>
+
+    This stows your current character and possesses the new character.
+    """
+    key = "puppet"
+    locks = "cmd:all()"
+    help_category = "general"
+
+    def func(self):
+        if not self.args:
+            self.caller.msg("Which character do you want to puppet?")
+            return
+        obj = self.caller.search(self.args.strip())
+        if obj.player:
+            self.caller.msg("That character is already being puppeted!")
