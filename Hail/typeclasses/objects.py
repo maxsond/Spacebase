@@ -11,6 +11,8 @@ inheritance.
 
 """
 from evennia import DefaultObject
+from evennia import Command as BaseCommand
+from evennia.commands.cmdset import CmdSet
 
 class Object(DefaultObject):
     """
@@ -160,3 +162,30 @@ class Object(DefaultObject):
 
      """
     pass
+
+class TestObject(DefaultObject):
+    def at_object_creation(self):
+        self.cmdset.add_default(CmdSetTestThing, permanent=True)
+
+class TestObjectCommand(BaseCommand):
+    """
+    Test building commands
+
+    Usage:
+       testthing
+    """
+    key = "testthing"
+
+    def func(self):
+        obj = self.caller.search(self.args.strip())
+        self.caller.msg("You just tried testing {}".format(obj))
+
+class CmdSetTestThing(CmdSet):
+    "CmdSet for the lightsource commands"
+    key = "testthing_cmdset"
+    # this is higher than the dark cmdset - important!
+    priority = 3
+
+    def at_cmdset_creation(self):
+        "called at cmdset creation"
+        self.add(TestObjectCommand())

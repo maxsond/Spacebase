@@ -3,6 +3,7 @@ General Character commands usually availabe to all characters
 """
 from django.conf import settings
 from evennia.utils import utils, evtable
+from evennia.utils import prettytable
 from evennia.typeclasses.attributes import NickTemplateInvalid
 
 COMMAND_DEFAULT_CLASS = utils.class_from_module(settings.COMMAND_DEFAULT_CLASS)

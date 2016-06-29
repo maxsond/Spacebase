@@ -10,6 +10,7 @@ creation commands.
 from evennia import DefaultCharacter
 from evennia.commands.cmdset import CmdSet
 from evennia import Command as BaseCommand
+from evennia.commands.default.cmdset_character import CharacterCmdSet
 
 class Character(DefaultCharacter):
     """
@@ -38,6 +39,7 @@ class Character(DefaultCharacter):
 
     def at_pre_puppet(self, player, session=None):
         self.cmdset.add_default(CmdSetTest, permanent=True)
+        self.cmdset.add(CharacterCmdSet, permanent=True)
         if self.db.prelogout_location:
             # try to recover
             self.location = self.db.prelogout_location
