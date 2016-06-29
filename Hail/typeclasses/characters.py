@@ -76,15 +76,13 @@ class Character(DefaultCharacter):
 
         """
         if self.locks.check_lockstring(looker, "perm(Builders)"):
-            return "{}(#{})".format(self.name + self.db.role, self.id)
-        return self.name + self.db.role
+            return "{}(#{})".format(self.name + str(self.db.role), self.id)
+        return self.name + str(self.db.role)
 
     def control_new_character(self, session, object):
         self.player.unpuppet_object(session)
         self.player.puppet_object(object)
 
-class AICore(DefaultCharacter):
-    pass
 
 class TestCmd(BaseCommand):
     """
@@ -114,7 +112,7 @@ class ReroleCmd(BaseCommand):
         obj = self.caller.search(args[0])
         title = args[1:]
         if obj.db.role:
-            obj.db.role = title
+            obj.db.role = " " + " ".join(title)
             self.caller.msg("Done!")
         else:
             self.caller.msg("Oops!")
