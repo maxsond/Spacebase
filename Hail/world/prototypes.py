@@ -40,31 +40,59 @@ See the `@spawn` command and `evennia.utils.spawner` for more info.
 #
 #NOBODY = {}
 #
-#GOBLIN = {
-# "key": "goblin grunt",
-# "health": lambda: randint(20,30),
-# "resists": ["cold", "poison"],
-# "attacks": ["fists"],
-# "weaknesses": ["fire", "light"]
-# }
-#
-#GOBLIN_WIZARD = {
-# "prototype": "GOBLIN",
-# "key": "goblin wizard",
-# "spells": ["fire ball", "lighting bolt"]
-# }
-#
-#GOBLIN_ARCHER = {
-# "prototype": "GOBLIN",
-# "key": "goblin archer",
-# "attacks": ["short bow"]
-#}
-#
-#ARCHWIZARD = {
-# "attacks": ["archwizard staff"],
-#}
-#
-#GOBLIN_ARCHWIZARD = {
-# "key": "goblin archwizard",
-# "prototype" : ("GOBLIN_WIZARD", "ARCHWIZARD")
-#}
+GOBLIN = {
+"key": "goblin grunt",
+"health": lambda: randint(20,30),
+"resists": ["cold", "poison"],
+"attacks": ["fists"],
+"weaknesses": ["fire", "light"]
+}
+
+GOBLIN_WIZARD = {
+"prototype": "GOBLIN",
+"key": "goblin wizard",
+"spells": ["fire ball", "lighting bolt"]
+}
+
+GOBLIN_ARCHER = {
+"prototype": "GOBLIN",
+"key": "goblin archer",
+"attacks": ["short bow"]
+}
+
+ARCHWIZARD = {
+"attacks": ["archwizard staff"],
+}
+
+GOBLIN_ARCHWIZARD = {
+"key": "goblin archwizard",
+"prototype" : ("GOBLIN_WIZARD", "ARCHWIZARD")
+}
+
+SEED_PROTOTYPES = {
+    "seed": {
+        "typeclass": "Hail.typeclasses.objects.Seed",
+        "key": "Seed",
+        "growth_interval": 1,
+        "produce": "Vegetable",
+        "desc": "A generic seed."
+    },
+    "carrot seed": {
+        "prototype": "seed",
+        "aliases": "carrot",
+        "key": "carrot seed",
+        "desc": "A piece from a carrot, good for regrowing."
+    }
+}
+
+VEGETABLE_PROTOTYPES = {
+    "vegetable": {
+        "typeclass": "Hail.typeclasses.objects.Vegetable",
+        "key": "Vegetable",
+        "potassium": 0.1,
+        "carbs": 0.1,
+        "magnesium": 0.1,
+        "iron": 0.1,
+        "desc": "A generic vegetable."
+    },
+}
