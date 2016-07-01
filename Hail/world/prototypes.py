@@ -36,63 +36,86 @@ See the `@spawn` command and `evennia.utils.spawner` for more info.
 
 """
 
-#from random import randint
-#
-#NOBODY = {}
-#
-GOBLIN = {
-"key": "goblin grunt",
-"health": lambda: randint(20,30),
-"resists": ["cold", "poison"],
-"attacks": ["fists"],
-"weaknesses": ["fire", "light"]
+#########
+# Seeds #
+#########
+
+SEED = {
+    "typeclass": "typeclasses.objects.Seed",
+    "key": "Seed",
+    "growth_interval": 1,
+    "produce": "VEGETABLE",
+    "desc": "A generic seed."
 }
 
-GOBLIN_WIZARD = {
-"prototype": "GOBLIN",
-"key": "goblin wizard",
-"spells": ["fire ball", "lighting bolt"]
+CARROTSEED = {
+    "prototype": "SEED",
+    "key": "carrot top",
+    "produce": "CARROT",
+    "desc": "The top of a carrot, good for regrowing."
 }
 
-GOBLIN_ARCHER = {
-"prototype": "GOBLIN",
-"key": "goblin archer",
-"attacks": ["short bow"]
+KALESEED = {
+    "prototype": "SEED",
+    "key": "kale seed",
+    "produce": "KALE",
+    "desc": "A small seed for a nutritious leafy green."
 }
 
-ARCHWIZARD = {
-"attacks": ["archwizard staff"],
+POTATOSEED = {
+    "prototype": "SEED",
+    "key": "potato eye",
+    "produce": "POTATO",
+    "desc": "The eye of a potato, ready for replanting."
 }
 
-GOBLIN_ARCHWIZARD = {
-"key": "goblin archwizard",
-"prototype" : ("GOBLIN_WIZARD", "ARCHWIZARD")
+##############
+# Vegetables #
+##############
+
+VEGETABLE = {
+    "typeclass": "typeclasses.objects.Vegetable",
+    "key": "Vegetable",
+    "potassium": 0.1,
+    "carbs": 0.1,
+    "magnesium": 0.1,
+    "iron": 0.1,
+    "desc": "A generic vegetable."
 }
 
-SEED_PROTOTYPES = {
-    "seed": {
-        "typeclass": "Hail.typeclasses.objects.Seed",
-        "key": "Seed",
-        "growth_interval": 1,
-        "produce": "Vegetable",
-        "desc": "A generic seed."
-    },
-    "carrot seed": {
-        "prototype": "seed",
-        "aliases": "carrot",
-        "key": "carrot seed",
-        "desc": "A piece from a carrot, good for regrowing."
-    }
+CARROT = {
+    "prototype": "VEGETABLE",
+    "key": "carrot",
+    "desc": "A long orange root."
 }
 
-VEGETABLE_PROTOTYPES = {
-    "vegetable": {
-        "typeclass": "Hail.typeclasses.objects.Vegetable",
-        "key": "Vegetable",
-        "potassium": 0.1,
-        "carbs": 0.1,
-        "magnesium": 0.1,
-        "iron": 0.1,
-        "desc": "A generic vegetable."
-    },
+KALE = {
+    "prototype": "VEGETABLE",
+    "key": "leaf of kale",
+    "alias": "kale",
+    "desc": "A dark green leaf of nutritious kale."
+}
+
+POTATO = {
+    "prototype": "VEGETABLE",
+    "key": "potato",
+    "desc": "A humble-looking spud."
+}
+
+PRODUCE_LIST = {
+    "VEGETABLE": VEGETABLE,
+    "CARROT": CARROT,
+    "KALE": KALE,
+    "POTATO": POTATO
+}
+
+###################
+# Hydroponics Bed #
+###################
+
+HYDROBED = {
+    "typeclass": "typeclasses.objects.HydroponicBed",
+    "key": "hydroponics bed",
+    "aliases": ["bed"],
+    "desc": "A utilitarian bed for hydroponic growing of edible produce."
 }

@@ -36,6 +36,10 @@ class Character(DefaultCharacter):
     def at_object_creation(self):
         "This is called when object is first created, only."
         self.db.role = " the Citizen"
+        self.db.potassium = 0
+        self.db.carbs = 0
+        self.db.magnesium = 0
+        self.db.iron = 0
         self.cmdset.add_default(CmdSetTest, permanent=True)
 
     def at_pre_puppet(self, player, session=None):

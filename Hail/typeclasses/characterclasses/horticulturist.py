@@ -2,6 +2,8 @@ from evennia import DefaultCharacter
 from evennia.commands.cmdset import CmdSet
 from base import ClassCommand
 from ..objects import Seed, HydroponicBed, Fertilizer, Vegetable
+from evennia.utils.spawner import spawn
+from Hail.world.prototypes import PRODUCE_LIST
 
 
 class Horticulturist(DefaultCharacter):
@@ -18,6 +20,7 @@ class CmdSetHorticulturist(CmdSet):
         self.add(Fertilize())
         self.add(Harvest())
         self.add(Assess())
+        self.add(Check())
 
 
 class Plant(ClassCommand):
@@ -31,19 +34,31 @@ class Plant(ClassCommand):
 
     def func(self):
         args = self.args.strip().split(" ")
-        seed = self.caller.search(args[0])
-        bed = self.caller.search(args[1])
-        if not seed:
-            self.caller.msg("What is it you want to plant?")
-        elif type(seed) != Seed:
-            self.caller.msg("You can't plant that!")
-        elif not bed:
-            self.caller.msg("Where do you want to plant the {seed}?".format(seed=seed))
-        elif type(bed) != HydroponicBed:
-            self.caller.msg("You can't plant the {seed} there!".format(seed=seed))
+        try:
+            seed = self.caller.search(args[0])
+            bed = self.caller.search(args[1])
+        except Exception as e:
+            self.caller.msg("You can't do that! {}".format(e))
         else:
-            self.caller.msg("You plant the {seed} in the {bed}".format(seed=seed, bed=bed))
-            bed.db.planted = True
+            if not seed:
+                self.caller.msg("What is it you want to plant?")
+            elif type(seed) != Seed:
+                self.caller.msg("You can't plant that!")
+            elif not bed:
+                self.caller.msg("Where do you want to plant the {seed}?".format(seed=seed))
+            elif type(bed) != HydroponicBed:
+                self.caller.msg("You can't plant the {seed} there! {type}".format(seed=seed, type=type(bed)))
+            elif bed.db.grown:
+                self.caller.msg("Try harvesting from it first.")
+            elif bed.db.planted:
+                self.caller.msg("There's already something planted there!")
+            else:
+                self.caller.msg("You plant the {seed} in the {bed}".format(seed=seed, bed=bed))
+                bed.db.planted = True
+                bed.db.produce = seed.db.produce
+                self.caller.msg("You should get a {}. A {}".format(seed.db.produce, bed.db.produce))
+                seed.delete()
+                bed.scripts.add("scripts.PlantGrowth")
 
 
 class Fertilize(ClassCommand):
@@ -81,17 +96,22 @@ class Harvest(ClassCommand):
     key = "harvest"
 
     def func(self):
-        arg = self.caller.search(self.args.strip())
-        if not arg:
+        bed = self.caller.search(self.args.strip())
+        if not bed:
             self.caller.msg("What did you want to harvest from?")
-        elif type(arg) != HydroponicBed:
+        elif type(bed) != HydroponicBed:
             self.caller.msg("You can't harvest from that!")
-        elif not arg.db.planted:
+        elif not bed.db.planted:
             self.caller.msg("You cannot reap what you don't sow.")
-        elif not arg.db.grown:
+        elif not bed.db.grown:
             self.caller.msg("It's not ready to harvest yet.")
         else:
-            self.caller.msg("You harvest the produce from {bed}".format(bed=arg))
+            self.caller.msg("You harvest the {produce} from {bed}".format(produce=bed.db.produce, bed=bed))
+            bed.db.grown = False
+            bed.db.planted = False
+            produce = spawn(PRODUCE_LIST[bed.db.produce])
+            self.caller.msg(produce)
+            produce.location = self.caller
 
 
 class Assess(ClassCommand):
@@ -122,3 +142,24 @@ class Assess(ClassCommand):
             Iron:           {} mg
             """)
 
+class Check(ClassCommand):
+    """
+    Check the status of a growing plant
+
+    Usage:
+       check <bed>
+    """
+    key = "check"
+
+    def func(self):
+        bed = self.caller.search(self.args.strip())
+        if not bed:
+            self.caller.msg("Which bed did you want to check?")
+        elif type(bed) != HydroponicBed:
+            self.caller.msg("That doesn't appear to be a bed you can check.")
+        else:
+            try:
+                self.caller.msg("That plant should take about {seconds} seconds to mature.".format(
+                    seconds=bed.scripts.get("plantgrowth")[0].time_until_next_repeat()))
+            except:
+                self.caller.msg("That bed isn't growing anything.")

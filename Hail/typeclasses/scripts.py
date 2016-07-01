@@ -89,3 +89,30 @@ class Script(DefaultScript):
 
     """
     pass
+
+
+class PlantGrowth(DefaultScript):
+
+    """
+    At start, set maturity to 0 if it has no maturity
+
+    Every tick, increase plant's maturity (BY HOW MUCH?)
+
+    When maturity is (HOW MUCH?), plant is done growing. Create a vegetable object and remove this script.
+    """
+
+    def at_start(self):
+        self.key = "plantgrowth"
+        self.desc = "A plant is growing."
+        self.interval = 20  # seconds
+        # self.repeats = 5  # repeat only a certain number of times
+        self.start_delay = True  # wait self.interval until first call
+        self.persistent = True
+        if not self.obj.db.maturity:
+            self.obj.db.maturity = 0
+
+    def at_repeat(self):
+        MAX_MATURITY = 0
+        if self.obj.db.maturity >= MAX_MATURITY:
+            self.obj.db.grown = True
+            self.stop()

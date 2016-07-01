@@ -163,36 +163,6 @@ class Object(DefaultObject):
      """
     pass
 
-
-class TestObject(DefaultObject):
-    def at_object_creation(self):
-        self.cmdset.add_default(CmdSetTestThing, permanent=True)
-
-
-class TestObjectCommand(BaseCommand):
-    """
-    Test building commands
-
-    Usage:
-       testthing
-    """
-    key = "testthing"
-
-    def func(self):
-        obj = self.caller.search(self.args.strip())
-        self.caller.msg("You just tried testing {}".format(obj))
-
-
-class CmdSetTestThing(CmdSet):
-    "CmdSet for the lightsource commands"
-    key = "testthing_cmdset"
-    # this is higher than the dark cmdset - important!
-    priority = 3
-
-    def at_cmdset_creation(self):
-        "called at cmdset creation"
-        self.add(TestObjectCommand())
-
 ########################
 # Horticulture Objects #
 ########################
@@ -206,7 +176,8 @@ class HydroponicBed(DefaultObject):
     def at_object_creation(self):
         self.db.planted = False  # Has something been planted here?
         self.db.grown = False  # Has whatever's been planted here grown to maturity?
-    pass
+        self.db.desc = "A utilitarian bed for hydroponic growing of edible produce."
+        self.name = "hydroponics bed"
 
 
 class Fertilizer(DefaultObject):
