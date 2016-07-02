@@ -42,8 +42,8 @@ See the `@spawn` command and `evennia.utils.spawner` for more info.
 
 SEED = {
     "typeclass": "typeclasses.objects.Seed",
-    "key": "Seed",
-    "growth_interval": 1,
+    "key": "seed",
+    "growth_time": 10,
     "produce": "VEGETABLE",
     "desc": "A generic seed."
 }
@@ -75,7 +75,7 @@ POTATOSEED = {
 
 VEGETABLE = {
     "typeclass": "typeclasses.objects.Vegetable",
-    "key": "Vegetable",
+    "key": "vegetable",
     "potassium": 0.1,
     "carbs": 0.1,
     "magnesium": 0.1,
@@ -118,4 +118,30 @@ HYDROBED = {
     "key": "hydroponics bed",
     "aliases": ["bed"],
     "desc": "A utilitarian bed for hydroponic growing of edible produce."
+}
+
+###############
+# Comestibles #
+###############
+
+FOOD = {
+    "typeclass": "typeclasses.objects.Food",
+    "key": "food",
+    "desc": "A form of food so generic it doesn't even warrant description."
+}
+
+VEGFOOD = {
+    "prototype": "FOOD",
+    "key": "edible vegetable",
+    "desc": "A generic edible vegetable."
+}
+
+CARROTFOOD = {
+    "prototype": "VEGFOOD",
+    "key": "carrot chunks",
+    "desc": "A handful of delicious carrot chunks."
+}
+
+EDIBLEVEGS = {
+    "CARROT": CARROTFOOD
 }

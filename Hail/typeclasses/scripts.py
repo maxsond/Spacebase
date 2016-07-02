@@ -104,10 +104,11 @@ class PlantGrowth(DefaultScript):
     def at_start(self):
         self.key = "plantgrowth"
         self.desc = "A plant is growing."
-        self.interval = 20  # seconds
+        self.interval = self.obj.db.interval if self.obj.db.interval else 1  # seconds
         # self.repeats = 5  # repeat only a certain number of times
         self.start_delay = True  # wait self.interval until first call
         self.persistent = True
+        self.obj.db.desc += " It's currently growing a {}.".format(self.obj.db.produce.lower())
         if not self.obj.db.maturity:
             self.obj.db.maturity = 0
 
@@ -115,4 +116,5 @@ class PlantGrowth(DefaultScript):
         MAX_MATURITY = 0
         if self.obj.db.maturity >= MAX_MATURITY:
             self.obj.db.grown = True
+            self.obj.db.desc += " It looks ready for picking."
             self.stop()

@@ -90,7 +90,7 @@ class CmdOOCLook(MuxPlayerLookCommand):
 
     key = "look"
     aliases = ["l", "ls"]
-    locks = "cmd:all()"
+    locks = "cmd:pperm(Immortals)"
     help_category = "General"
 
     # this is used by the parent
@@ -121,7 +121,7 @@ class CmdCharCreate(COMMAND_DEFAULT_CLASS):
     if you want.
     """
     key = "@charcreate"
-    locks = "cmd:pperm(Players)"
+    locks = "cmd:pperm(Immortals)"
     help_category = "General"
 
     # this is used by the parent
@@ -194,7 +194,7 @@ class CmdIC(COMMAND_DEFAULT_CLASS):
 
     key = "@ic"
     # lock must be all() for different puppeted objects to access it.
-    locks = "cmd:all()"
+    locks = "cmd:pperm(Immortals)"
     aliases = "@puppet"
     help_category = "General"
 
@@ -244,7 +244,7 @@ class CmdOOC(MuxPlayerLookCommand):
     """
 
     key = "@ooc"
-    locks = "cmd:pperm(Players)"
+    locks = "cmd:pperm(Immortals)"
     aliases = "@unpuppet"
     help_category = "General"
 
@@ -291,7 +291,7 @@ class CmdSessions(COMMAND_DEFAULT_CLASS):
 
     """
     key = "@sessions"
-    locks = "cmd:all()"
+    locks = "cmd:pperm(Immortals)"
     help_category = "General"
 
     # this is used by the parent
@@ -414,7 +414,7 @@ class CmdOption(COMMAND_DEFAULT_CLASS):
     """
     key = "@option"
     aliases = "@options"
-    locks = "cmd:all()"
+    locks = "cmd:pperm(Immortals)"
 
     # this is used by the parent
     player_caller = True
@@ -636,7 +636,7 @@ class CmdColorTest(COMMAND_DEFAULT_CLASS):
     """
     key = "@color"
     aliases = "color"
-    locks = "cmd:all()"
+    locks = "cmd:pperm(Immortals)"
     help_category = "General"
 
     # this is used by the parent
@@ -721,7 +721,7 @@ class CmdQuell(COMMAND_DEFAULT_CLASS):
 
     key = "@quell"
     aliases = ["@unquell"]
-    locks = "cmd:pperm(Players)"
+    locks = "cmd:pperm(Immortals)"
     help_category = "General"
 
     # this is used by the parent

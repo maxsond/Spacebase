@@ -8,6 +8,7 @@ Rooms are simple containers that has no location of their own.
 from evennia import DefaultRoom
 from evennia import Command as BaseCommand
 from evennia.commands.cmdset import CmdSet
+from evennia import search_object
 
 
 class Room(DefaultRoom):
@@ -25,15 +26,20 @@ class Room(DefaultRoom):
 class ChargenRoom(DefaultRoom):
 
     def at_object_receive(self, character, source_location):
-        character.player.msg("""
-        Welcome to SpaceBase! To begin, you'll need to select a role aboard the base.
+        character.player.msg(self.db.desc)
 
-        1) Artificial Intelligence
-        2) Chef
-        3) Chemist
-        4) Doctor
-        5) Engineer
-        6) Horticulturist
+    def at_object_creation(self):
+        self.cmdset.add_default(ChargenCmdSet)
+        self.db.desc = """
+        Welcome to SpaceBase! To begin, please select a role aboard the base.
+
+        {}1) Artificial Intelligence|n
+        {}2) Chef|n
+        {}3) Chemist|n
+        {}4) Doctor|n
+        {}5) Engineer|n
+        {}6) Horticulturist|n
+        {}7) Port Manager|n
 
         Commands
         ---
@@ -41,10 +47,18 @@ class ChargenRoom(DefaultRoom):
         SELECT #  : Choose your class
         CHARGEN   : Review this message
         ---
-        """)
+        """.format(
+            "|r",
+            "|r",
+            "|r",
+            "|r",
+            "|r",
+            "|g",
+            "|x"
+        )
 
-    def at_object_creation(self):
-        self.cmdset.add_default(ChargenCmdSet)
+    def return_appearance(self, looker):
+        return self.db.desc
 
 class Chargen(BaseCommand):
     """
@@ -57,23 +71,7 @@ class Chargen(BaseCommand):
     key = "chargen"
 
     def func(self):
-        self.caller.msg("""
-        Welcome to SpaceBase! To begin, you'll need to select a role aboard the base.
-
-        1) Artificial Intelligence
-        2) Chef
-        3) Chemist
-        4) Doctor
-        5) Engineer
-        6) Horticulturist
-
-        Commands
-        ---
-        DETAILS # : Get information about a class
-        SELECT #  : Choose your class
-        CHARGEN   : Review this message
-        ---
-        """)
+        self.caller.msg(self.db.desc)
 
 
 class Details(BaseCommand):
@@ -135,7 +133,13 @@ class Details(BaseCommand):
 
             The horticulturist controls access to hydroponics and is responsible for growing the renewable
             materials the spacebase will require. The horticulturist will depend on the engineer and chemist
-            to supply fertilizer to keep the plants growing.
+            to supply fertilizer to keep the plants growing, and the chef to preserve seeds for regrowing.
+            """,
+            """
+            Port Manager
+            ---
+
+            This class is planned for post-release.
             """
         ]
         try:
@@ -165,17 +169,34 @@ class Select(BaseCommand):
             "Chemist",
             "Doctor",
             "Engineer",
-            "Horticulturist"
+            "Horticulturist",
+            "Port Manager"
         ]
-        try:
-            index = int(self.args.strip()) - 1
-            if index >= 0:
-                role = " the " + roles[int(self.args.strip()) - 1]
+        enabled_roles = [
+            False,
+            False,
+            False,
+            False,
+            False,
+            True,
+            False
+        ]
+        # try:
+        index = int(self.args.strip()) - 1
+        if index >= 0:
+            if enabled_roles[index]:
+                role = " the " + roles[index]
                 self.caller.db.role = role
+                self.caller.msg("You have become a {}!".format(roles[index].lower()))
+                if index == 5:
+                    hydro_room = search_object("Hydroponics")
+                    self.caller.move_to(hydro_room[0])
             else:
-                self.caller.msg("That's not a valid number!")
-        except:
+                self.caller.msg("That class is still in development and can't be played yet.")
+        else:
             self.caller.msg("That's not a valid number!")
+        # except:
+        #     self.caller.msg("That's not a valid number!")
 
 
 class ChargenCmdSet(CmdSet):

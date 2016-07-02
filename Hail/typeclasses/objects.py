@@ -177,7 +177,8 @@ class HydroponicBed(DefaultObject):
         self.db.planted = False  # Has something been planted here?
         self.db.grown = False  # Has whatever's been planted here grown to maturity?
         self.db.desc = "A utilitarian bed for hydroponic growing of edible produce."
-        self.name = "hydroponics bed"
+        self.db.saved_desc = self.db.desc
+        self.db.name = "hydroponics bed"
 
 
 class Fertilizer(DefaultObject):
@@ -185,6 +186,12 @@ class Fertilizer(DefaultObject):
 
 
 class Vegetable(DefaultObject):
+    pass
+
+class Food(DefaultObject):
+    pass
+
+class EdibleVegetable(Food):
     pass
 
 

@@ -90,20 +90,6 @@ class Character(DefaultCharacter):
         self.player.puppet_object(object)
 
 
-class TestCmd(BaseCommand):
-    """
-    Test building commands
-
-    Usage:
-       testme
-    """
-    key = "testme"
-    locks = "cmd:all()"
-    help_category = "general"
-
-    def func(self):
-        self.caller.msg("Hello, {}".format(self.caller))
-
 class ReroleCmd(BaseCommand):
     """
     Change a character's title
@@ -117,11 +103,8 @@ class ReroleCmd(BaseCommand):
         args = self.args.strip().split(" ")
         obj = self.caller.search(args[0])
         title = args[1:]
-        if obj.db.role:
-            obj.db.role = " " + " ".join(title)
-            self.caller.msg("Done!")
-        else:
-            self.caller.msg("Oops!")
+        obj.db.role = " " + " ".join(title)
+        self.caller.msg("Done!")
 
 class CmdSetTest(CmdSet):
     "CmdSet for the lightsource commands"
@@ -131,5 +114,4 @@ class CmdSetTest(CmdSet):
 
     def at_cmdset_creation(self):
         "called at cmdset creation"
-        self.add(TestCmd())
         self.add(ReroleCmd())

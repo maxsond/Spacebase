@@ -36,27 +36,35 @@ class Plant(ClassCommand):
         args = self.args.strip().split(" ")
         try:
             seed = self.caller.search(args[0])
-            bed = self.caller.search(args[1])
-        except Exception as e:
-            self.caller.msg("You can't do that! {}".format(e))
+        except:
+            self.caller.msg("What is it you want to plant?")
+            return
+        try:
+            bed = self.caller.search(" ".join(args[1:]))
+        except:
+            self.caller.msg("Where do you want to plant the {seed}?".format(seed=seed))
+            return
         else:
-            if not seed:
-                self.caller.msg("What is it you want to plant?")
-            elif type(seed) != Seed:
+            if type(seed) != Seed:
                 self.caller.msg("You can't plant that!")
-            elif not bed:
-                self.caller.msg("Where do you want to plant the {seed}?".format(seed=seed))
             elif type(bed) != HydroponicBed:
-                self.caller.msg("You can't plant the {seed} there! {type}".format(seed=seed, type=type(bed)))
+                self.caller.msg("You can't plant the {seed} there!".format(seed=seed))
             elif bed.db.grown:
                 self.caller.msg("Try harvesting from it first.")
             elif bed.db.planted:
                 self.caller.msg("There's already something planted there!")
             else:
                 self.caller.msg("You plant the {seed} in the {bed}".format(seed=seed, bed=bed))
+                self.caller.location.msg_contents("{actor} plants the {seed} in the {bed}".format(
+                    actor=self.caller,
+                    seed=seed,
+                    bed=bed
+                ),
+                    exclude=self.caller
+                )
                 bed.db.planted = True
                 bed.db.produce = seed.db.produce
-                self.caller.msg("You should get a {}. A {}".format(seed.db.produce, bed.db.produce))
+                bed.db.interval = seed.db.growth_time
                 seed.delete()
                 bed.scripts.add("scripts.PlantGrowth")
 
@@ -73,7 +81,7 @@ class Fertilize(ClassCommand):
     def func(self):
         args = self.args.strip().split(" ")
         bed = self.caller.search(args[0])
-        fertilizer = self.caller.search(args[1])
+        fertilizer = self.caller.search(" ".join(args[1:]))
         if not bed:
             self.caller.msg("What do you want to fertilize?")
         elif not fertilizer:
@@ -84,7 +92,13 @@ class Fertilize(ClassCommand):
             self.caller.msg("That won't do much good as fertilizer.")
         else:
             self.caller.msg("You fertilize {bed} with {fertilizer}".format(bed=bed, fertilizer=fertilizer))
-
+            self.caller.location.msg_contents("{actor} fertilizes {bed} with {fertilizer}".format(
+                actor=self.caller,
+                bed=bed,
+                fertilizer=fertilizer
+            ),
+                exclude=self.caller
+            )
 
 class Harvest(ClassCommand):
     """
@@ -106,12 +120,21 @@ class Harvest(ClassCommand):
         elif not bed.db.grown:
             self.caller.msg("It's not ready to harvest yet.")
         else:
-            self.caller.msg("You harvest the {produce} from {bed}".format(produce=bed.db.produce, bed=bed))
+            self.caller.msg("You harvest the {produce} from the {bed}".format(
+                produce=bed.db.produce.lower(),
+                bed=bed))
+            self.caller.location.msg_contents("{} harvests the {} from the {}".format(
+                self.caller,
+                bed.db.produce.lower(),
+                bed
+            ),
+                exclude=self.caller
+            )
             bed.db.grown = False
             bed.db.planted = False
+            bed.db.desc = bed.db.saved_desc
             produce = spawn(PRODUCE_LIST[bed.db.produce])
-            self.caller.msg(produce)
-            produce.location = self.caller
+            produce[0].location = self.caller
 
 
 class Assess(ClassCommand):
@@ -125,14 +148,14 @@ class Assess(ClassCommand):
     key = "assess"
 
     def func(self):
-        arg = self.caller.search(self.args.strip())
-        if not arg:
+        veg = self.caller.search(self.args.strip())
+        if not veg:
             self.caller.msg("What do you want to assess?")
-        elif type(arg) not in [Seed, Vegetable]:
+        elif type(veg) not in [Seed, Vegetable]:
             self.caller.msg("You can't assess that!")
-        elif type(arg) == Seed:
-            self.caller.msg("That seed's growth rate is {}".format(arg.db.growth_rate))
-        elif type(arg) == Vegetable:
+        elif type(veg) == Seed:
+            self.caller.msg("That seed will take about {} seconds to grow a mature vegetable.".format(veg.db.growth_time))
+        elif type(veg) == Vegetable:
             self.caller.msg("""
             Vegetable:      {}
             ------------------
@@ -140,7 +163,13 @@ class Assess(ClassCommand):
             Carbohydrates:  {} mg,
             Magnesium:      {} mg,
             Iron:           {} mg
-            """)
+            """.format(
+                veg.key,
+                veg.db.potassium,
+                veg.db.carbs,
+                veg.db.magnesium,
+                veg.db.iron
+            ))
 
 class Check(ClassCommand):
     """
@@ -163,3 +192,9 @@ class Check(ClassCommand):
                     seconds=bed.scripts.get("plantgrowth")[0].time_until_next_repeat()))
             except:
                 self.caller.msg("That bed isn't growing anything.")
+            self.caller.location.msg_contents("{} looks impatiently at the {}".format(
+                self.caller,
+                bed
+            ),
+                exclude=self.caller
+            )
