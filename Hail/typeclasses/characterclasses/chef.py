@@ -3,7 +3,8 @@ from evennia.commands.cmdset import CmdSet
 from evennia import Command as BaseCommand
 from evennia.utils.spawner import spawn
 
-from Hail.typeclasses.objects import Vegetable
+from typeclasses.objects import Vegetable
+from world import prototypes
 
 class Chef(DefaultCharacter):
     pass
@@ -15,6 +16,7 @@ class CmdSetChef(CmdSet):
     def at_cmdset_creation(self):
         "called at cmdset creation"
         self.add(Chop())
+        self.add(Recipes())
 
 class Chop(BaseCommand):
     """
@@ -25,19 +27,51 @@ class Chop(BaseCommand):
     """
 
     key = "chop"
+    help_category = "class abilities"
 
     def func(self):
 
         veg = self.args.strip()
-
+        veg = self.caller.search(veg)
         if not veg:
             self.caller.msg("What do you want to chop up?")
         elif type(veg) != Vegetable:
-            self.caller.msg("That's not a vegetable.")
+            self.caller.msg("That's not a vegetable. It's  {}".format(type(veg)))
+        elif veg.db.produce.upper() not in prototypes.EDIBLEVEGS:
+            self.caller.msg("You don't know how to prepare that vegetable. {}".format(prototypes.EDIBLEVEGS))
         else:
-            self.caller.msg("You chop up the {}".format(veg.lower()))
+            self.caller.msg("You chop up the {}".format(veg.key.lower()))
             self.caller.location.msg_contents("{} chops up the {}".format(
                 self.caller,
-                veg.lower()
-            ))
-            spawn()
+                veg.key.lower()
+            ),
+                exclude=self.caller
+            )
+
+            food = spawn(prototypes.proto(veg.db.produce))[0]
+            seed = spawn(prototypes.proto(veg.db.seed))[0]
+            veg.delete()
+            seed.location = self.caller
+            food.location = self.caller
+
+class Recipes(BaseCommand):
+
+    key = "recipes"
+    help_category = "class abilities"
+
+    def func(self):
+        """
+        Refer to your known recipes
+
+        Usage:
+           recipes
+        """
+        self.caller.msg("""
+        MASHED POTATOES AND CARROTS
+        ---
+
+        1 handful of carrot chunks
+        2 prepared potatoes
+
+        Combine for a tasty salad.
+        """)

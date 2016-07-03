@@ -11,7 +11,7 @@ from evennia import DefaultCharacter
 from evennia.commands.cmdset import CmdSet
 from evennia import Command as BaseCommand
 from evennia.commands.default.cmdset_character import CharacterCmdSet
-from characterclasses import horticulturist
+from characterclasses import horticulturist, chef
 
 class Character(DefaultCharacter):
     """
@@ -45,6 +45,7 @@ class Character(DefaultCharacter):
     def at_pre_puppet(self, player, session=None):
         self.cmdset.add_default(CharacterCmdSet, permanent=True)
         self.cmdset.add(horticulturist.CmdSetHorticulturist, permanent=True)
+        self.cmdset.add(chef.CmdSetChef, permanent=True)
         self.cmdset.add(CmdSetTest, permanent=True)
         if self.db.prelogout_location:
             # try to recover

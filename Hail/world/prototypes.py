@@ -1,3 +1,5 @@
+import sys
+
 """
 Prototypes
 
@@ -35,6 +37,9 @@ Possible keywords are:
 See the `@spawn` command and `evennia.utils.spawner` for more info.
 
 """
+
+def proto(proto_str):
+    return getattr(sys.modules[__name__], proto_str)
 
 #########
 # Seeds #
@@ -80,12 +85,15 @@ VEGETABLE = {
     "carbs": 0.1,
     "magnesium": 0.1,
     "iron": 0.1,
+    "produce": "VEGFOOD",
     "desc": "A generic vegetable."
 }
 
 CARROT = {
     "prototype": "VEGETABLE",
     "key": "carrot",
+    "produce": "CARROTFOOD",
+    "seed": "CARROTSEED",
     "desc": "A long orange root."
 }
 
@@ -93,12 +101,16 @@ KALE = {
     "prototype": "VEGETABLE",
     "key": "leaf of kale",
     "alias": "kale",
+    "produce": "KALEFOOD",
+    "seed": "KALESEED",
     "desc": "A dark green leaf of nutritious kale."
 }
 
 POTATO = {
     "prototype": "VEGETABLE",
     "key": "potato",
+    "produce": "POTATOFOOD",
+    "seed": "POTATOSEED",
     "desc": "A humble-looking spud."
 }
 
@@ -142,6 +154,20 @@ CARROTFOOD = {
     "desc": "A handful of delicious carrot chunks."
 }
 
+KALEFOOD = {
+    "prototype": "VEGFOOD",
+    "key": "prepared kale leaf",
+    "desc": "A deep green leaf filled with nutrients and prepared for consumption."
+}
+
+POTATOFOOD = {
+    "prototpe": "VEGFOOD",
+    "key": "prepared potato",
+    "desc": "A potato prepared for eating."
+}
+
 EDIBLEVEGS = {
-    "CARROT": CARROTFOOD
+    "CARROTFOOD": CARROTFOOD,
+    "KALEFOOD": KALEFOOD,
+    "POTATOFOOD": POTATOFOOD
 }
