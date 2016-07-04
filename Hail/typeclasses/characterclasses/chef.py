@@ -75,3 +75,38 @@ class Recipes(BaseCommand):
 
         Combine for a tasty salad.
         """)
+
+class Cook(BaseCommand):
+    """
+    Cook something from your recipe list
+
+    Usage:
+       cook <recipe>
+    """
+
+    key = "cook"
+
+    def func(self):
+        recipe = self.args.strip()
+
+RECIPE = {
+    "key": "generic recipe",
+    "desc": ""
+}
+
+"""
+The Chef Class
+---
+
+The chef has access to the kitchen. In the kitchen, there's an oven,
+a stove, and a sink. There's also a pot, a pan, and a mixing bowl.
+A chef can:
+    Chop
+    Put X in pot
+    Put X in pan
+    Put X in bowl
+    Cook X on stove (should be a cooking container)
+    Bake X in oven (should
+    Extract milk from soy beans
+
+"""
