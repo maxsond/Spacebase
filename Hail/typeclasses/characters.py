@@ -11,7 +11,7 @@ from evennia import DefaultCharacter
 from evennia.commands.cmdset import CmdSet
 from evennia import Command as BaseCommand
 from evennia.commands.default.cmdset_character import CharacterCmdSet
-from characterclasses import horticulturist, chef
+from characterclasses import horticulturist, chef, doctor
 
 class Character(DefaultCharacter):
     """
@@ -40,11 +40,14 @@ class Character(DefaultCharacter):
         self.db.carbs = 0
         self.db.magnesium = 0
         self.db.iron = 0
+        self.db.disorders = None
         self.cmdset.add_default(CmdSetTest, permanent=True)
+        # TODO: Set home to greeting room
 
     def at_pre_puppet(self, player, session=None):
         self.cmdset.add_default(CharacterCmdSet, permanent=True)
         self.cmdset.add(horticulturist.CmdSetHorticulturist, permanent=True)
+        self.cmdset.add(doctor.CmdSetDoctor, permanent=True)
         self.cmdset.add(chef.CmdSetChef, permanent=True)
         self.cmdset.add(CmdSetTest, permanent=True)
         if self.db.prelogout_location:
