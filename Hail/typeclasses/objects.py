@@ -194,7 +194,11 @@ class Food(DefaultObject):
 class EdibleVegetable(Food):
     pass
 
+class Syringe(DefaultObject):
+    pass
 
+class Chemical(DefaultObject):
+    pass
 
 
 

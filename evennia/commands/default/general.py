@@ -438,7 +438,7 @@ class CmdPose(COMMAND_DEFAULT_CLASS):
     """
     key = "pose"
     aliases = [":", "emote"]
-    locks = "cmd:all()"
+    locks = "cmd:pperm(Immortals)"
 
     def parse(self):
         """
@@ -475,7 +475,7 @@ class CmdAccess(COMMAND_DEFAULT_CLASS):
     """
     key = "access"
     aliases = ["groups", "hierarchy"]
-    locks = "cmd:all()"
+    locks = "cmd:pperm(Immortals)"
     arg_regex = r"$"
 
     def func(self):

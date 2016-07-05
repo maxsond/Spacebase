@@ -2,9 +2,6 @@ from evennia import DefaultCharacter
 from evennia.commands.cmdset import CmdSet
 from evennia import Command as BaseCommand
 
-from Hail.typeclasses.characters import Character
-
-
 class Doctor(DefaultCharacter):
     pass
 
@@ -36,11 +33,11 @@ class Diagnose(BaseCommand):
         except:
             self.caller.msg("That's not a thing.")
             return
-        if type(target) != Character:
-            self.caller.msg("Dammit, Jim, you're a doctor! Not a... whatever would diagnose that.")
+        # if type(target) != Character:
+        #     self.caller.msg("Dammit, Jim, you're a doctor! Not a... whatever would diagnose that.")
         else:
             self.caller.msg("""
-            Subject
+            Subject: {t}
             ---
 
             Potassium levels    :   {p}
@@ -52,6 +49,7 @@ class Diagnose(BaseCommand):
             ---
             {d}
             """.format(
+                t=target,
                 p=target.db.potassium,
                 c=target.db.carbs,
                 m=target.db.magnesium,
@@ -93,3 +91,5 @@ class Inject(BaseCommand):
             self.caller.msg("That's not a valid vector for mystery chemicals.")
         elif not syringe.db.contents:
             self.caller.msg("As much as you like sticking people with needles, there's really no point to sticking them with an empty one.")
+        else:
+            self.caller.msg("You stick {} with the needle!".format(subject))

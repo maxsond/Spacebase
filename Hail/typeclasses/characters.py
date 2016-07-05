@@ -45,10 +45,16 @@ class Character(DefaultCharacter):
         # TODO: Set home to greeting room
 
     def at_pre_puppet(self, player, session=None):
+
+        self.db.potassium = 1
+        self.db.carbs = 2
+        self.db.magnesium = 2
+        self.db.iron = 2
+
         self.cmdset.add_default(CharacterCmdSet, permanent=True)
         self.cmdset.add(horticulturist.CmdSetHorticulturist, permanent=True)
         self.cmdset.add(doctor.CmdSetDoctor, permanent=True)
-        self.cmdset.add(chef.CmdSetChef, permanent=True)
+        self.cmdset.remove(chef.CmdSetChef)
         self.cmdset.add(CmdSetTest, permanent=True)
         if self.db.prelogout_location:
             # try to recover
